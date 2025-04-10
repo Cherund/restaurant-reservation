@@ -9,7 +9,6 @@ import logging
 
 
 logger = logging.getLogger(__name__)
-
 router = APIRouter()
 
 
@@ -23,7 +22,9 @@ def get_tables(session: Session = Depends(get_session)):
 
 @router.post("/", response_model=Table)
 def create_table(table: TableCreate, session: Session = Depends(get_session)):
-    logger.info(f"Creating table: {table.name}, Seats: {table.seats}, Location: {table.location}")
+    logger.info(f"Creating table: {table.name}, "
+                f"Seats: {table.seats}, "
+                f"Location: {table.location}")
     db_table = Table(**table.model_dump())
     session.add(db_table)
     session.commit()
@@ -39,11 +40,13 @@ def delete_table(table_id: int, session: Session = Depends(get_session)):
     ).all()
 
     if reservations:
-        raise HTTPException(status_code=400, detail="Cannot delete table with active reservations")
+        raise HTTPException(status_code=400,
+                            detail="Cannot delete table with active reservations")
 
     table = session.get(Table, table_id)
     if not table:
-        raise HTTPException(status_code=404, detail="Table not found")
+        raise HTTPException(status_code=404,
+                            detail="Table not found")
 
     session.delete(table)
     session.commit()
