@@ -37,7 +37,7 @@ poetry install
 
 ### 2. Create .env file
 ```
-DATABASE_URL=postgresql+psycopg2://postgres:postgres@localgost:5432/restaurant
+DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/restaurant
 ```
 
 ### 3. Start the project
@@ -56,7 +56,7 @@ docker-compose exec web alembic upgrade head
 
 Once the app is running, visit:
 
-Swagger UI: http://localhost:8000/docs
+Swagger UI: http://localhost:8000/docs <br>
 ReDoc: http://localhost:8000/redoc
 
 ## ✅ Example Requests
@@ -82,15 +82,14 @@ POST /reservations/
 }
 ```
 
-## 🧠 Notes
+## 🧠 Tests
 
-Prevents reservation conflicts (same table, overlapping time)
-Migrations must be run after first start
+Checking reservation basic function and conflicts (same table, overlapping time)
+```
+poetry run pytest
+```
+
+## 🗒 Notes 
+
+Migrations must be run after first start<br>
 .env file required
-
-## 👤 Author
-
-Egor
-📧 cherund@gmail.com
-💬 Telegram: @Cherund
-🌐 GitHub: github.com/cherund
