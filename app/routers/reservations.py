@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from datetime import datetime, timedelta
-from sqlmodel import Session, select, and_
+from sqlmodel import Session, select
 from app.db import get_session
 from app.models.reservation import Reservation
 from app.schemas.reservation import ReservationCreate
@@ -13,20 +13,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def is_time_slot_available(session: Session, table_id: int, start_time: datetime, duration_minutes: int) -> bool:
+def is_time_slot_available(
+    session: Session, table_id: int, start_time: datetime, duration_minutes: int
+) -> bool:
     """Проверка доступности времени для бронирования."""
     end_time = start_time + timedelta(minutes=duration_minutes)
 
     # Получаем все бронирования для стола
     reservations = session.exec(
-        select(Reservation).where(
-            Reservation.table_id == table_id
-        )
+        select(Reservation).where(Reservation.table_id == table_id)
     ).all()
 
     # Проверяем пересечения вручную
     for reservation in reservations:
-        reservation_end_time = reservation.reservation_time + timedelta(minutes=reservation.duration_minutes)
+        reservation_end_time = reservation.reservation_time + timedelta(
+            minutes=reservation.duration_minutes
+        )
         if reservation.reservation_time < end_time and reservation_end_time > start_time:
             return False
 
@@ -42,8 +44,13 @@ def get_reservations(session: Session = Depends(get_session)):
 
 
 @router.post("/", response_model=Reservation)
-def create_reservation(reservation: ReservationCreate, session: Session = Depends(get_session)):
-    logger.info(f"Creating reservation for {reservation.customer_name} at table {reservation.table_id}.")
+def create_reservation(
+    reservation: ReservationCreate, session: Session = Depends(get_session)
+):
+    logger.info(
+        f"Creating reservation for {reservation.customer_name} "
+        f"at table {reservation.table_id}."
+    )
 
     start_time = reservation.reservation_time
     duration_minutes = reservation.duration_minutes
@@ -51,14 +58,19 @@ def create_reservation(reservation: ReservationCreate, session: Session = Depend
 
     if not is_time_slot_available(session, reservation.table_id, start_time, duration_minutes):
         logger.warning(
-            f"Reservation conflict detected for table {reservation.table_id} during {start_time} - {end_time}")
+            f"Reservation conflict detected for table {reservation.table_id} "
+            f"during {start_time} - {end_time}"
+        )
         raise HTTPException(status_code=400, detail="Table is already reserved at this time.")
 
     db_reservation = Reservation(**reservation.model_dump())
     session.add(db_reservation)
     session.commit()
     session.refresh(db_reservation)
-    logger.info(f"Reservation created for {reservation.customer_name} at table {reservation.table_id}.")
+    logger.info(
+        f"Reservation created for {reservation.customer_name} "
+        f"at table {reservation.table_id}."
+    )
     return db_reservation
 
 
