@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "restaurant-reservation"
+name = "restaurant_reservation"
 version = "0.1.0"
 description = "REST API for reservations in a restaurant"
 authors = ["Egor Gerimovich <cherund@gmail.com>"]

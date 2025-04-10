@@ -29,11 +29,10 @@ Built with **FastAPI**, **SQLModel**, **PostgreSQL**, and **Docker**.
 
 ## ⚙️ Getting Started
 
-### 1. Clone the repository
+### 1. After cloning the repository install dependencies:
 
-```bash
-git clone https://github.com/cherund/restaurant-reservation.git
-cd restaurant-reservation
+```
+poetry install
 ```
 
 ### 2. Create .env file
