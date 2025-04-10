@@ -38,7 +38,6 @@ cd restaurant-reservation
 
 ### 2. Create .env file
 ```
-DOCKER_DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/restaurant
 DATABASE_URL=postgresql+psycopg2://postgres:postgres@localgost:5432/restaurant
 ```
 
